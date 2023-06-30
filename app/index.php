@@ -1,5 +1,8 @@
 <?
+//phpinfo();exit;
 include "fake_database.php";
+
+
 
 if(isset($_POST["submit_login"])){
   if( $DB["users"][$_POST["username"]] == md5($_POST["password"]) ){

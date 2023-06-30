@@ -4,7 +4,9 @@ include "crawler.php";
 
 $startURL = 'http://www.kslomianki.pl';
 
-//$startURL = 'https://wp-media.me';
+// $startURL = 'https://wp-media.me';
+ //$startURL = 'https://onet.pl/';
+
 //$startURL = 'https://osir-zoliborz.waw.pl/plywalnia/grafik-zajec/';
 $siteMapper = new siteMapper($startURL);
 

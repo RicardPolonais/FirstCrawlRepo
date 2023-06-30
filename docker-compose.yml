@@ -1,16 +1,37 @@
 version: "2"
 services:
-  crawler:
+  webserver:
     image: mydemophpimage
     ports:
-      - "80:80"
-#    volumes:
-#      - ./app:/var/www/html
+      - "3001:80"
+#      - "443:443"
+    volumes:
+      - ./app:/var/www/html
     environment:
+      MYSQL_DB_CONNECTION: test
+      MYSQL_DB_NAME: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
       SITE_URL: http://localhost
     networks:
-      - test
-
+      - firstcrawlrepo_default
+#   db:
+#     image: mysql:5.7
+#     environment:
+#       MYSQL_ROOT_PASSWORD: test
+# #      MYSQL_DATABASE: test
+# #      MYSQL_USER: test
+# #      MYSQL_PASSWORD: test
+#     ports:
+#       - "3307:3306"
+      
+#   phpmyadmin:
+#     image: phpmyadmin
+#     environment:
+#       PMA_ARBITRARY: 1
+#     restart: always
+#     ports:
+#       - 3002:80
 networks:
-  test:
+  firstcrawlrepo_default:
     external: true

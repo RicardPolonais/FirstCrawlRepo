@@ -1,0 +1,10 @@
+apt-get install dos2unix
+https://stackoverflow.com/questions/39527571/are-shell-scripts-sensitive-to-encoding-and-line-endings
+
+docker build -t mydemophpimage .
+docker compose up
+docker exec -it firstcrawlrepo-webserver-1 bash
+
+
+
+
