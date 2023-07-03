@@ -1,5 +1,5 @@
 <?
-include "fake_database.php";
+include "login_database.php";
 
 if(!$_SESSION["logged"]) {
    header("Location: index.php"); 
@@ -8,10 +8,15 @@ if(!$_SESSION["logged"]) {
 
 ?>
 <p>
-<a href="mk_sitemap.php?no_cron">Make sitemap</a>
+<a href="mk_sitemap.php?no_cron">Make new sitemap</a>
+</p>
+<p>
+<a href="logout.php">Logout</a>
 </p>
 
 <?
-@include "sitemap.html";
+// Display the results on the admin page.
+// When the admin requests to view the results, pull the results from storage and display them on the admin page
+@include "results/sitemap.html";
 
 ?>

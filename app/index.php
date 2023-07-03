@@ -1,6 +1,6 @@
 <?
 //phpinfo();exit;
-include "fake_database.php";
+include "login_database.php";
 
 
 
@@ -32,5 +32,13 @@ if($_SESSION["logged"]) {
     <div class="error"><?= $errorMsg ?></div>
     <input type="submit" value="Login" name="submit_login" />
   </form>
+
+<?
+// On the front-end, allow a visitor to view the sitemap.html page.
+?>
+  <p>
+    <a href="sitemap.html">View sitemap</a>
+  </p>
 </body>
 </html>
+

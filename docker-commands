@@ -7,4 +7,4 @@ docker exec -it firstcrawlrepo-webserver-1 bash
 
 
 
-
+ php /var/www/html/mk_sitemap.php

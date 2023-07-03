@@ -1,73 +1,175 @@
 <?
-// function progressCallback($resource, $download_size = 0, $downloaded = 0, $upload_size = 0, $uploaded = 0)
-// {
-// 	//die();
-// 	//PA($resource);
-// }
 
 class siteMapper
 {
 	protected $startUrl;
 	protected $depth;
 	protected $parsedStartUrl;
-	protected $checkedUrl;
-	protected $errorMsg;
+	protected $checkedUrls;
+	protected $errorUrls;
+	protected $lastCrawlTime;
 	
 	public function __construct($startUrl, $depth = 1)
-   {
+  	{
 		$this->startUrl = ($startUrl);
       	$this->depth = $depth;
       	$this->parsedStartUrl = parse_url($startUrl);
-   }
+   	}
+   	private function newCrawl($url, $depth){
+		if($this->checkIfCrawlNeeded()){
+			
+			//Delete the results from the last crawl (i.e. in temporary storage), if they exist.
+			$this->checkedUrls=[];
+			$this->errorUrls=[];
+			$this->crawlPage($this->startUrl, $this->depth);
+			return 1;
+		}else{
+			return 0;
+		}
+		
 
+   	}
 	private function crawlPage($url, $depth)
 	{
 		$url=rtrim($url, "/");
-		$this->checkedUrl[$url] = true;
-		$nodes = $this->grabNodes($this->curl($url));
+		$this->checkedUrls[$url] = true;
+		$nodes = $this->grabNodes($this->grabPage($url));
 		if( $depth == 0  ) {
 			return;
 		  }
-
+		
+		// Extract all of the internal hyperlinks, i.e. results.
 		if (is_array($nodes) || is_object($nodes)){
 			foreach($nodes as $node) {
 				$href = $node->getAttribute('href');
-				$parsedHref = parse_url(trim($href));
 
-				//read only:
-				//http or https on absolute path links
-				//AND
-				//relative paths 
-				if( ($this->parsedStartUrl["host"] == $parsedHref["host"] AND ($parsedHref["scheme"]=="http" OR $parsedHref["scheme"]=="https"))
-						OR 
-					(empty($parsedHref["host"]) AND !empty($parsedHref["path"]))
-				){
-					$newCrawlAddr = $this->parsedStartUrl["scheme"]."://".$this->parsedStartUrl["host"].$parsedHref["path"];
-					if(!isset($this->checkedUrl[$newCrawlAddr])){
-						//$this->foundUrl[$newCrawlAddr] = true;
-						$this->crawlPage($newCrawlAddr, $depth - 1);
+				if( $newCrawlUrl = $this->newCrawlUrl($href)){
+					if(!isset($this->checkedUrls[$newCrawlUrl]) AND !isset($this->errorUrls[$newCrawlUrl])){
+						$this->crawlPage($newCrawlUrl, $depth - 1);
 					}
 				}
-				
 			}
 		}
+		if($depth == $this->depth){
+			//flip main arrays to get more handy result
+			$this->lastCrawlTime = 	time();
+			$this->checkedUrls = 	array_keys($this->checkedUrls);
+			//$this->errorUrls = 		array_keys($this->errorUrls);
+		}
 	}
-	private function curl($url, $timeout=5){
-		
+	private function newCrawlUrl($href){
+		$parsedHref = parse_url(trim($href));
+		//read only: (http AND https on absolute path links within startup domain) OR relative paths
+		if( ($this->parsedStartUrl["host"] == $parsedHref["host"] AND ($parsedHref["scheme"]=="http" OR $parsedHref["scheme"]=="https"))
+				OR 
+			(empty($parsedHref["host"]) AND !empty($parsedHref["path"]))
+		){
+			return	$this->parsedStartUrl["scheme"]."://".$this->parsedStartUrl["host"].$parsedHref["path"];
+		}else{
+			return;
+		}	
+	}
+	private function grabPage($url, $timeout=5){
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL,$url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , 5);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-
 		$output = curl_exec($ch);
 		
+		// If an error happens, display an error notice to inform of what happened and guide for what to do.
 		if ($errNo = curl_errno($ch)) {
-			$this->errorMsg[$url] = $this->curlErrCode($errNo);
-			unset($this->checkedUrl[$url]);
+			$this->errorUrls[$url] = $this->curlErrCode($errNo);
+			unset($this->checkedUrls[$url]);
 		}
 		curl_close($ch);
+
 		return $output;
+	}
+	
+	private function grabNodes($output){
+		if(!empty($output)){
+			$dom = new DOMDocument('1.0');
+			libxml_use_internal_errors(true);
+			$dom->loadHTML($output);
+			libxml_clear_errors();
+			$nodes = $dom->getElementsByTagName('a');
+		}
+		return $nodes;
+	}
+	public function run()
+	{
+		if($this->newCrawl($this->startUrl, $this->depth)){
+			// Store results temporarily in the database. *
+			// * For storage, you can use a database or the filesystem.
+			$this->saveCralwResultsToDB();
+			
+			//Create a sitemap.html file that shows the results as a sitemap list structure.
+			$this->saveSitemap();
+
+			// Save the home page’s .php file as a .html file
+			$this->savePageAsHtml($this->startUrl);
+		}
+       
+		PA(date("Y-m-d H:i:s", $this->lastCrawlTime));
+		PA(md5(json_encode($this->checkedUrls)));
+		PA($this->checkedUrl);  
+		PA($this->errorMsg);
+
+	}
+
+	private function checkIfCrawlNeeded(){
+		[$lastCrawlTime, $checkedUrls, $errorUrls]=$this->getLastResultsFromDB();
+		
+		//exit;
+		// Only delete the temporary stored results based on time. Normally, we would also delete them when a change in the content happens. But let’s keep it really simple and only delete based on time.
+
+		if($lastCrawlTime+1 < time()){
+			return 1;
+		}else{
+			return 0;
+		}
+		
+	}
+	private function getLastResultsFromDB(){
+		@include "results/crawl_database.php";
+		return [$time, json_decode($checkedUrls), json_decode($errorUrls)];
+	}
+	private function saveCralwResultsToDB(){
+		// For storage, you can use a database or the filesystem.
+		if(!empty($this->checkedUrls)){
+			$fp = fopen("results/crawl_database_tmp.php","w") or die("cant open file");
+			fputs($fp, "<? \n");
+			fputs($fp, "\$lastCrawlTime = '".	$this->lastCrawlTime."'; \n");
+			fputs($fp, "\$checkedUrls = '".		json_encode($this->checkedUrls)."'; \n");
+			fputs($fp, "\$errorUrls = '".		json_encode($this->errorUrls)."'; \n ?>");
+			fclose($fp);
+
+			@unlink("results/crawl_database.php");
+			@rename("results/crawl_database_tmp.php", "results/crawl_database.php");
+		}
+	}
+	private function saveSitemap( ){
+		// Delete the sitemap.html file if it exists.
+		@unlink("results/sitemap.html");
+		$fp = fopen("results/sitemap.html","w") or die("cant open file");
+		fputs($fp, "<h3>".$this->startUrl." sitemap</h3>\n");
+		fputs($fp, "<ul> \n");
+		foreach($this->checkedUrls as $url) {
+			fputs($fp, "<li><a href=\"".$url."\">".$url."</a></li> \n");
+		}
+		foreach($this->errorUrls as [$url, $err]) {
+			fputs($fp, "<li><a href=\"".$url."\">".$url.": error ".$err."</a></li> \n");
+		}
+		fputs($fp, "</ul>");
+		fclose($fp);
+		
+	}
+	private function savePageAsHtml($url){
+		@unlink("results/phpPage.html");
+		$fp = fopen("results/phpPage.html","w") or die("cant open file");
+		fputs($fp, "".$this->grabPage($url)."");
+		fclose($fp);
 	}
 	private function curlErrCode($errNo){
 		$curl_errcode = array(
@@ -138,23 +240,6 @@ class siteMapper
 			79 => "CURLE_SSH"
 			);
 		return $curl_errcode[$errNo];
-	}
-	private function grabNodes($output){
-		if(!empty($output)){
-			$dom = new DOMDocument('1.0');
-			libxml_use_internal_errors(true);
-			$dom->loadHTML($output);
-			libxml_clear_errors();
-			$nodes = $dom->getElementsByTagName('a');
-		}
-		return $nodes;
-	}
-	public function run()
-	{
-        $this->crawlPage($this->startUrl, $this->depth);
-		PA($this->checkedUrl);  
-		PA($this->errorMsg);
-
 	}
 }
 
