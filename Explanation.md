@@ -1,26 +1,5 @@
 
-# Comments to "the what"
-## Add a back-end admin page (for WP - settings page) where the admin can log in and then manually trigger a crawl and view the results.
-
-## When the admin triggers a crawl:
-### Set a task to run immediately.
-
-### Then set it to run the crawl every hour ⏰🤖.
-
-## The crawl task:
-## Delete the results from the last crawl (i.e. in temporary storage), if they exist.
-## Delete the sitemap.html file if it exists.
-## Start at the website’s root URL (i.e. home page)
-## Extract all of the internal hyperlinks, i.e. results.
-## Store results temporarily in the database.
-## Display the results on the admin page.
-## Save the home page’s .php file as a .html file.
-## Create a sitemap.html file that shows the results as a sitemap list structure.
-## When the admin requests to view the results, pull the results from storage and display them on the admin page.
-## If an error happens, display an error notice to inform of what happened and guide for what to do.
-## On the front-end, allow a visitor to view the sitemap.html page.
-
-# Comments to the app functions
+# Comments
 
 ## The problem to be solved in your own words
 The task is to build the crawler capable to grab all links from a website and list them.
@@ -85,3 +64,7 @@ The task is to build the crawler capable to grab all links from a website and li
 * The results are stored in html file ("For storage, you can use a database or the filesystem.")
 * The sitemap is included on admin page ("Display the results on the admin page")
 * the sitemap can be accessed/included on visitors page ("On the front-end, allow a visitor to view the sitemap.html page")
+
+## PHPCS
+* the code passes phpcs test with wp-rocket configuration phpcs.xml file (excluded Wordpress rules)
+* 

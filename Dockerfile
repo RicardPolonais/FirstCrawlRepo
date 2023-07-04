@@ -1,11 +1,13 @@
-FROM php:7.4-apache
+#FROM php:7.4-apache
+#FROM php:7.3-apache
+FROM php:7.2-apache
 RUN apt-get update && apt upgrade -y
 RUN docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable mysqli
 #ADD ./app /var/www/html
 #RUN mkdir /var/www/html/v1
 #RUN mkdir /var/www/html/v2
 #COPY ./install-wp-tests.sh /var/www/html/v2/install-wp-tests.sh
-COPY ./app/my-site.conf /etc/apache2/sites-available/my-site.conf
+COPY ./my-site.conf /etc/apache2/sites-available/my-site.conf
 RUN echo 'SetEnv MYSQL_DB_CONNECTION ${MYSQL_DB_CONNECTION}' >> /etc/apache2/conf-enabled/environment.conf
 RUN echo 'SetEnv MYSQL_DB_NAME ${MYSQL_DB_NAME}' >> /etc/apache2/conf-enabled/environment.conf
 RUN echo 'SetEnv MYSQL_USER ${MYSQL_USER}' >> /etc/apache2/conf-enabled/environment.conf

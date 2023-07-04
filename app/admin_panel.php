@@ -1,4 +1,4 @@
-<?
+<?php
 include "login_database.php";
 
 if(!$_SESSION["logged"]) {
@@ -14,7 +14,7 @@ if(!$_SESSION["logged"]) {
 <a href="logout.php">Logout</a>
 </p>
 
-<?
+<?php
 // Display the results on the admin page.
 // When the admin requests to view the results, pull the results from storage and display them on the admin page
 @include "results/sitemap.html";

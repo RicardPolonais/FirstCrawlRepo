@@ -1,21 +1,19 @@
-<?
-//phpinfo();exit;
-include "login_database.php";
+<?php
+require "login_database.php";
 
 
 
-if(isset($_POST["submit_login"])){
-  if( $DB["users"][$_POST["username"]] == md5($_POST["password"]) ){
-	  $_SESSION["logged"] = $_POST["username"];
-  }else{
-	  unset($_SESSION["logged"]);
-	  $errorMsg = "Invalid username or password.";
-  }
-  
+if (isset($_POST["submit_login"])) {
+    if ($DB["users"][$_POST["username"]] == md5($_POST["password"]) ) {
+        $_SESSION["logged"] = $_POST["username"];
+    } else {
+        unset($_SESSION["logged"]);
+        $errorMsg = "Invalid username or password.";
+    }
 }
-if($_SESSION["logged"]) {
-   header("Location: admin_panel.php"); 
-	exit;
+if ($_SESSION["logged"]) {
+    header("Location: admin_panel.php"); 
+    exit;
 }
 
 ?>
@@ -29,7 +27,7 @@ if($_SESSION["logged"]) {
   <form name="input" action="" method="post">
     <label for="username">Username:</label><input type="text" value="" id="username" name="username" />
     <label for="password">Password:</label><input type="password" value="" id="password" name="password" />
-    <div class="error"><?= $errorMsg ?></div>
+    <div class="error"><?php echo $errorMsg ?></div>
     <input type="submit" value="Login" name="submit_login" />
   </form>
 
