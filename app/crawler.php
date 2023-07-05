@@ -116,7 +116,7 @@ class SiteMapper
         //exit;
         // Only delete the temporary stored results based on time. Normally, we would also delete them when a change in the content happens. But let’s keep it really simple and only delete based on time.
 
-        if ($lastCrawlTime + 1 < time()) {
+        if ($lastCrawlTime + 3600 < time()) {
             return 1;
         } else {
             return 0;
