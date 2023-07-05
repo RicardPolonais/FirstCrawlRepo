@@ -17,6 +17,7 @@ if(!$_SESSION["logged"]) {
 <?php
 // Display the results on the admin page.
 // When the admin requests to view the results, pull the results from storage and display them on the admin page
-@include "results/sitemap.html";
+@include "results/crawl_database.php";
+if($lastCrawlTime) echo "<p>Last crawl: ".date("Y-m-d H:i:s", $lastCrawlTime)."</p>";
 
-?>
+@include "results/sitemap.html";

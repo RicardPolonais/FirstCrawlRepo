@@ -35,8 +35,7 @@ if ($_SESSION["logged"]) {
 // On the front-end, allow a visitor to view the sitemap.html page.
 ?>
   <p>
-    <a href="sitemap.html">View sitemap</a>
+    <a href="results/sitemap.html">View sitemap</a>
   </p>
 </body>
 </html>
-

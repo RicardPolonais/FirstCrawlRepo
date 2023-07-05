@@ -1,6 +1,6 @@
 #FROM php:7.4-apache
-#FROM php:7.3-apache
-FROM php:7.2-apache
+FROM php:7.3-apache
+#FROM php:7.2-apache
 RUN apt-get update && apt upgrade -y
 RUN docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable mysqli
 #ADD ./app /var/www/html
@@ -23,6 +23,7 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf &&\
 #RUN apt-get install subversion -y
 #RUN apt-get install dos2unix -y
 RUN apt-get install mc -y
+RUN apt-get install cron -y
 #RUN dos2unix /var/www/html/v2/install-wp-tests.sh
 #RUN apt-get install default-mysql-client -y
 #RUN /var/www/html/v2/install-wp-tests.sh test root test

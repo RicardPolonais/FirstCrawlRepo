@@ -49,10 +49,7 @@ class SiteMapper
             }
         }
         if ($depth == $this->depth) {
-            //flip main arrays to get more handy result
             $this->lastCrawlTime =     time();
-            $this->checkedUrls =     array_keys($this->checkedUrls);
-            //$this->errorUrls =         array_keys($this->errorUrls);
         }
     }
     private function newCrawlUrl($href)
@@ -105,16 +102,11 @@ class SiteMapper
             $this->saveCralwResultsToDB();
 
             //Create a sitemap.html file that shows the results as a sitemap list structure.
-            $this->saveSitemap();
+            $this->saveSitemapAsHtml();
 
             // Save the home page’s .php file as a .html file
             $this->savePageAsHtml($this->startUrl);
         }
-
-        PA(date("Y-m-d H:i:s", $this->lastCrawlTime));
-        PA(md5(json_encode($this->checkedUrls)));
-        PA($this->checkedUrl);
-        PA($this->errorMsg);
     }
 
     private function checkIfCrawlNeeded()
@@ -140,28 +132,29 @@ class SiteMapper
         // For storage, you can use a database or the filesystem.
         if (!empty($this->checkedUrls)) {
             $fp = fopen("results/crawl_database_tmp.php", "w") or die("cant open file");
-            fputs($fp, "<?php \n");
-            fputs($fp, "\$lastCrawlTime = '" .    $this->lastCrawlTime . "'; \n");
-            fputs($fp, "\$checkedUrls = '" .        json_encode($this->checkedUrls) . "'; \n");
-            fputs($fp, "\$errorUrls = '" .        json_encode($this->errorUrls) . "'; \n ?>");
+            fputs($fp, "<?php\n");
+            fputs($fp, "\$lastCrawlTime = '" .    $this->lastCrawlTime . "';\n");
+            fputs($fp, "\$checkedUrls = '" .        json_encode($this->checkedUrls) . "';\n");
+            fputs($fp, "\$errorUrls = '" .        json_encode($this->errorUrls) . "';");
             fclose($fp);
 
             @unlink("results/crawl_database.php");
             @rename("results/crawl_database_tmp.php", "results/crawl_database.php");
         }
     }
-    private function saveSitemap()
+    private function saveSitemapAsHtml()
     {
         // Delete the sitemap.html file if it exists.
         @unlink("results/sitemap.html");
         $fp = fopen("results/sitemap.html", "w") or die("cant open file");
         fputs($fp, "<h3>" . $this->startUrl . " sitemap</h3>\n");
         fputs($fp, "<ul> \n");
-        foreach ($this->checkedUrls as $url) {
-            fputs($fp, "<li><a href=\"" . $url . "\">" . $url . "</a></li> \n");
+        
+        foreach ($this->checkedUrls as $url => $nothing) {
+            fputs($fp, "<li><a href=\"" . $url . "\">" . $url . "</a></li>\n");
         }
-        foreach ($this->errorUrls as [$url, $err]) {
-            fputs($fp, "<li><a href=\"" . $url . "\">" . $url . ": error " . $err . "</a></li> \n");
+        foreach ($this->errorUrls as $url => $err) {
+            fputs($fp, "<li><a href=\"" . $url . "\">" . $url . ": error " . $err . "</a></li>\n");
         }
         fputs($fp, "</ul>");
         fclose($fp);
