@@ -28,7 +28,7 @@ The task is to build the crawler capable to grab all links from a website and li
 * There is one main class. It takes the start url and depth as inputs.
 * In my opinion it makes no sense and takes almost the same effort to make a crawler that runs only one page, so I made it recursive. By default it only runs on depth=1, so it is doing the job the way you wanted ("Only crawl the home webpage, i.e. instead of recursively crawling through all of the internal hyperlinks").
 * It is not crawling its own home page address, because obviously it makes no sense in this case, if we are running a test app. So I made it run some example adresses (see it in the code in file mk_sitemap.php).
-* The file mk_sitemap.php is not protected by login and it is not an error. I made it this way, so that it can be launched by cron without need to login. The risk of leaving this script unprotected should not be great if we are building a small custom app with custom script url, that nobody knows. However this start script should be protected in production environment, for example:
+* The file mk_sitemap.php is not protected by login and it is not an error. I made it this way, so that it can be launched by cron without need to login. The risk of leaving this script unprotected should not be great if we are building a small custom app with custom script url, that nobody knows. However this start script should be protected in production environment. We could for example:
     * make it accessible only from trusted IPs
     * use http authentication for script file which is launched by cron
     * login with curl and then run the script
