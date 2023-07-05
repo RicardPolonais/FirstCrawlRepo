@@ -6,7 +6,7 @@
 * login as user: password
 
 
-## The problem to be solved in your own words
+## The problem to be solved
 The task is to build the crawler capable to grab all links from a website and list them.
 
 ## A technical spec of how you will solve it
@@ -15,7 +15,7 @@ The task is to build the crawler capable to grab all links from a website and li
 * It stores data in files, instead of database. The "fake database" is loaded as arrays from a file.
 * There is a simple login mechanism for admin. After login user is redirected to admin panel. I made this to show you that I understand how the login mechanism works, but I will not attach much importance to it, as well as to the "database" mechanism.
 * As for the database, I would normally use a special class to communicate with the database (I like this one: https://github.com/ThingEngineer/PHP-MySQLi-Database-Class) or use build-in mechanizm within a framework. In this app I decided to use files, that the app includes when it is run in subsequent iterations.
-* I use the same way (PHP arrays saved in files) to save data in one of my apps, that I created coulple of years ago for my current employer. That app is processing a large amount of logging data every day downloaded from the office access control system. The processing is made one time a day, and then shown to HR department on demand. It works fine, not generating any errors during last years. That's why I used this mechanism to store data instead of MySQL.
+* I use the same way (PHP arrays saved in files) to save data in one of my apps, that I created coulple of years ago. That app is processing a large amount of logging data every day downloaded from the office access control system. The processing is made one time a day, and then shown to HR department on demand. It works fine, not generating any errors during last years. That's why I used this mechanism to store data instead of MySQL.
 
 * I tested it on PHP 7.2, 7.3, and 7.4 which is running inside a Docker container. Docker PHP 7.4 configuration files are included in the repo, so you can test it in the same environment if you want.
 
