@@ -66,11 +66,10 @@ The task is to build the crawler capable to grab all links from a website and li
 * My solution is to use cron on the server or built-in cron-like solution (in WordPress) to trigger the crawl file
     * something like: */60 * * * * wget -O /dev/null http://www.my_app_domain/mk_sitemap.php
     * OR */60 * * * * php /var/www/html/mk_sitemap.php
-## Sitemapper results
+## App results
 * The results are stored in html file ("For storage, you can use a database or the filesystem.")
 * The sitemap is included on admin page ("Display the results on the admin page")
 * the sitemap can be accessed/included on visitors page ("On the front-end, allow a visitor to view the sitemap.html page")
 
 ## PHPCS
 * the code passes PHPCS test with wp-rocket configuration phpcs.xml file (excluded Wordpress rules)
-* 
