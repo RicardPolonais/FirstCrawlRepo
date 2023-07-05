@@ -43,8 +43,8 @@ The task is to build the crawler capable to grab all links from a website and li
         * on success it returns the page
         * on failure it marks Url as error and saves error number
         * The important thing is that this function tryes to access every Url, even if it is on the last depth level of the crawl. Theoretically it doesn't need to do it, because we can add the adress to the sitemap without accessing it. However, we do not know whether the address exists and is accessible. Since the application is to serve SEO purposes, the information about the Url is important and we need to check it.
-        * the function curlErrCode() only holds Curl error codes, so it should not really be a part of the class. It's just helper function.
-    * It takes the output (the page or blank) and tryes to grab nodes from the page:
+        * the function curlErrCode() only holds Curl error codes, so it should not really be a part of the class. It's just a helper function.
+    * It takes the output (the page or whatever it gets) and tryes to grab nodes from the page:
         * it uses PHP DOMDocument class
         * ii uses libxml_use_internal_errors(true); and libxml_clear_errors(); to avoid DOMDocuments warnings on invalid tags, according to this: https://stackoverflow.com/questions/7082401/avoid-domdocument-xml-warnings-in-php
     * it checks if it's the deepest crawl level:
@@ -56,7 +56,7 @@ The task is to build the crawler capable to grab all links from a website and li
         * then it checks if the new Url is not already checked or marked as error
         * if it's new, then it runs the same function recursively (crawlPage()) with the new Url
     * at the end the first instance of the function saves the last crawl time
-        * I save results as indexes and flips it back to "normal" mode if I need to.
+        * It saves results as indexes of an array, but it makes no difference here. Saving it as indexes helps to check duplicates and to unset if needed.
 * after crawling all Urls:
     * the results are saved to "database" as arrays (first "Delete the sitemap.html file if it exists")
     * the sitemap is saved as html with information about errors
