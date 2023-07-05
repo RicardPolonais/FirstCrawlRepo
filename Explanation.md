@@ -36,7 +36,8 @@ The task is to build the crawler capable to grab all links from a website and li
 * The crawler starts by checking it we need to do anything ("Only delete the temporary stored results based on time. Normally, we would also delete them when a change in the content happens. But let’s keep it really simple and only delete based on time."). 
     * It's based on time, so it's comparing last crawl time with actual time.
     * If it would be based on contens change then the crawl should be done everytime to calculate the change of the sitemap (for example with md5 or other hash function). In my opinion the crawl (especially for a big website) takes much more ressources and time then the sitemap saving part, so in this particular case the conditional sitemap record based on content change calculation is pointless, because it is not going to save any ressources.
-* If there is need to make new sitemap, then it's resetting temporary results. It's done just in case someone wants to make 2 crawls on one object of this class.
+    * If there is need to make new sitemap (>3600s until last crawl), then it's resetting temporary results going on.
+    * If not, it returns and exits the app. 
 * Then it runs recursive crawl function starting from first Url:
     * It marks url as checked
     * It tryes to grab the Url with curl function
