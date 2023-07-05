@@ -35,8 +35,8 @@ The task is to build the crawler capable to grab all links from a website and li
 # How it works?
 * The crawler starts by checking it we need to do anything ("Only delete the temporary stored results based on time. Normally, we would also delete them when a change in the content happens. But let’s keep it really simple and only delete based on time."). 
     * It's based on time, so it's comparing last crawl time with actual time.
-    * If it would be based on contens change then the crawl should be done everytime to calculate the change of the sitemap (for example with md5 or other hash function). In my opinion the crawl (especially for a big website) takes much more ressources and time then the sitemap saving part, so in this particular case the conditional sitemap record based on content change calculation is pointless, because it is not going to save any ressources.
-    * If there is need to make new sitemap (>3600s until last crawl), then it's resetting temporary results going on.
+    * If it would be based on contens change then the crawl should be done everytime to calculate the change of the sitemap (for example with md5 or other hash function). In my opinion the crawl (especially for a big website) takes much more ressources and time than the sitemap saving part, so in this particular case the conditional sitemap saving based on content change calculation is pointless, because it is not going to save any ressources.
+    * If there is need to make new sitemap (>3600s until last crawl), then it's resetting temporary results and going on.
     * If not, it returns and exits the app. 
 * Then it runs recursive crawl function starting from first Url:
     * It marks url as checked
@@ -45,9 +45,9 @@ The task is to build the crawler capable to grab all links from a website and li
         * on failure it marks Url as error and saves error number
         * The important thing is that this function tryes to access every Url, even if it is on the last depth level of the crawl. Theoretically it doesn't need to do it, because we can add the adress to the sitemap without accessing it. However, we do not know whether the address exists and is accessible. Since the application is to serve SEO purposes, the information about the Url is important and we need to check it.
         * the function curlErrCode() only holds Curl error codes, so it should not really be a part of the class. It's just a helper function.
-    * It takes the output (the page or whatever it gets) and tryes to grab nodes from the page:
+    * It takes the output (the page or whatever it gets) and tryes to grab <a> nodes from the page:
         * it uses PHP DOMDocument class
-        * ii uses libxml_use_internal_errors(true); and libxml_clear_errors(); to avoid DOMDocuments warnings on invalid tags, according to this: https://stackoverflow.com/questions/7082401/avoid-domdocument-xml-warnings-in-php
+        * it uses libxml_use_internal_errors(true); and libxml_clear_errors(); to avoid DOMDocuments warnings on invalid tags, according to this: https://stackoverflow.com/questions/7082401/avoid-domdocument-xml-warnings-in-php
     * it checks if it's the deepest crawl level:
         * yes = return
         * no = go on
@@ -74,3 +74,6 @@ The task is to build the crawler capable to grab all links from a website and li
 
 ## PHPCS
 * the code passes PHPCS test with wp-rocket configuration phpcs.xml file (excluded Wordpress rules)
+
+## Problems
+* it can't find any links on pages with asynchronous content loading
